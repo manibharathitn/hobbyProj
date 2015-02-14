@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>StayZilla BI Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+	<!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+	<!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+	<!--script src="js/less-1.3.3.min.js"></script-->
+	<!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="img/favicon.png">
+  
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/scripts.js"></script>
+	<script type="text/javascript" src="js/highchartsutils.js"></script>
+	
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
+</head>
+
+<body>
+<div class="container">
+
+
+<div class="page-header">
+  <h1>StayZilla BI Dashboard <small>Dashboard and Trend Analytics</small></h1>
+</div>
+	<div class="row clearfix" id="row1">
+		<div class="col-md-2 column">
+		   <div data-spy="affix" id="myAffix">
+			<div class="btn-group-vertical">
+				 <button class="btn btn-default" type="button" id="pending-number"><em class="glyphicon glyphicon-stats"></em> Pending booking #</button> <button class="btn btn-default" type="button" id="pending-percent"><em class="glyphicon glyphicon-stats"></em> Pending booking %</button> 
+			</div>
+			</div>
+		</div>
+		<div class="col-md-10 column" id="graph-overview">
+			<div id="line1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			<div id="bar1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+			<div id="bar2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+		</div>
+	</div>
+	<div class="row clearfix" id="row2">
+		<div class="col-md-12 column">
+			<div class="dropdown">
+	
+				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+					<span class="selection">Option 1</span>
+					<span class="caret"></span>
+				  </button>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Jan')">Jan</a></li>
+					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Feb')">Feb</a></li>
+					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Mar')">Mar</a></li>
+					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Apr')">Apr</a></li>
+				</ul>
+			</div>
+			<div class="row clearfix">
+				<div class="col-md-6 column">
+					<div id="pie1" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+				</div>
+				<div class="col-md-6 column">
+					<div id="pie2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+				</div>
+			</div>
+			<div class="row clearfix">
+				<div class="col-md-6 column">
+					<div id="pie3" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+				</div>
+				<div class="col-md-6 column">
+					<div id="pie4" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script>
+
+$(document).ready(function(){ 
+
+    $("#pending-number").click(function(){
+        alert('pending-number');
+	});
+
+    $("#pending-percent").click(function(){
+        alert('pending-percent');
+	});        
+	
+});
+
+$('#myAffix').affix({
+  offset: {
+    bottom: function () {
+      return (this.bottom = $('#row2').outerHeight(true))
+    }
+  }
+})
+
+$(".dropdown-menu li a").click(function(){
+
+  $(this).parents(".dropdown").find('.selection').text($(this).text());
+  $(this).parents(".dropdown").find('.selection').val($(this).text());
+
+});
+
+var barXData = ['Chennai', 'Madurai', 'Tanjore', '56', '56', '56', '56', '56', '56', '56', '56', '56'];
+var barYData = [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4];
+drawBar('#bar1', barXData, barYData, 'Booking Trend (based on City)');
+drawBar('#bar2', barXData, barYData, 'Booking Trend (based on Hotel)');
+
+
+
+
+var lineXData = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var lineYData = [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
+drawLine('#line1', lineXData, lineYData, 'StayZilla Booking Trend');
+
+
+
+
+//mix (x,y) values and construct the dataValues for pie chart
+dataValues = [       
+			['Firefox',   160],
+            ['IE',       212],
+            ['Safari',    100],
+            ['Opera',     120],
+            ['Others',   200]
+        ];
+drawPie('#pie1',dataValues, 'Top Bookings');
+drawPie('#pie2',dataValues, 'Top Pending Bookings');
+drawPie('#pie3',dataValues, 'Avg. Duration of Stay');
+drawPie('#pie4',dataValues, 'Bookings based on Hotels');
+		
+function updateGraph(month) {
+
+	alert(month);
+}
+
+
+</script>
+</body>
+</html>
