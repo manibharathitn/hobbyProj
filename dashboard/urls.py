@@ -4,4 +4,5 @@ from dashboard import views
 urlpatterns = patterns('',
     # Examples:
     url(r'^$',views.detail),
+	url(r'^plotgraph_pendingbooking',views.getPendingBooking),
 )
