@@ -99,10 +99,13 @@
 $(document).ready(function(){
 
     $("#pending-number").click(function(){
+        //chartDataUrl = "plotgraph_pendingbooking?by=month";
+        //refreshChart(chartDataUrl);
 	});
 
     $("#pending-percent").click(function(){
-        alert('pending-percent');
+        //chartDataUrl = "plotgraph_pendingbooking?by=hid";
+        //refreshChart(chartDataUrl);
 	});
 
 });
@@ -122,34 +125,34 @@ $(".dropdown-menu li a").click(function(){
 
 });
 
-var barXData = ['Chennai', 'Madurai', 'Tanjore', '56', '56', '56', '56', '56', '56', '56', '56', '56'];
-var barYData = [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4];
-drawBar('#bar1', barXData, barYData, 'Booking Trend (based on City)');
-drawBar('#bar2', barXData, barYData, 'Booking Trend (based on Hotel)');
-
-
-var chartDataUrl = "{% url 'plotgraph_pendingbooking' %}?by=month";
-$.getJSON(chartDataUrl,
-	function(data) {
-		avgByDayOptions.xAxis.categories = data['chart_data']['dates'];
-		avgByDayOptions.series[0].name = 'Avg Glucose (mg/dL)';
-		avgByDayOptions.series[0].data = data['chart_data']['values'];
-		var chart = new Highcharts.Chart(avgByDayOptions);
-});
-
-
-var lineXData = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var lineYData = [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
+var chartDataUrl = "plotgraph_pendingbooking?by=city_code";
 
 
 $.getJSON(chartDataUrl,
 	function(data) {
-		lineXData = data['X'];
-		lineXData = data['Y'];
+		drawBar('#bar1',data['X'] , data['Y'], 'Booking Trend (based on City)');
 });
 
-drawLine('#line1', lineXData, lineYData, 'StayZilla Booking Trend');
+chartDataUrl = "plotgraph_pendingbooking?by=hid";
+
+$.getJSON(chartDataUrl,
+	function(data) {
+		drawBar('#bar2', data['X'], data['Y'], 'Booking Trend (based on Hotel)');
+});
+
+chartDataUrl = "plotgraph_pendingbooking?by=month";
+refreshChart(chartDataUrl);
+
+//TODO:Optimize this
+function refreshChart(chartDataUrl) {
+    $.getJSON(chartDataUrl,
+    	function(data) {
+    		drawLine('#line1', data['X'], data['Y'], 'StayZilla Booking Trend');
+
+    });
+}
+
+
 
 
 

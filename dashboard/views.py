@@ -1,8 +1,7 @@
 from django.shortcuts import render
-from dashboard.models import Booking
 from dashboard.chartutil import ChartData
+from django.http import HttpResponse
 import json
-#from django.http import HttpResponse
 
 # Create your views here.
 
@@ -13,6 +12,11 @@ def detail(request):
 def getPendingBooking(request):
 	params = request.GET
 	groupby = params.get('by', '')
+
+    #groupby = by
+
+	#data = {}
 	data = ChartData.getChartData(groupby)
-	
+
 	return HttpResponse(json.dumps(data), content_type='application/json')
+

@@ -10,18 +10,21 @@ function drawBar(divId, xData, yData, titleChart) {
             text: null
         },
         xAxis: {
-            categories: xData
+            categories: xData,
+            labels: {
+                enabled: false
+            }
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Rainfall (mm)'
+                text: '# of booking'
             }
         },
         tooltip: {
             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">City code : {point.x}: </td>' +
+                '<td style="padding:0"><b>{point.y}</b></td></tr>',
             footerFormat: '</table>',
             shared: true,
             useHTML: true
@@ -37,7 +40,7 @@ function drawBar(divId, xData, yData, titleChart) {
 			text: 'Designed by Mani'
 		},
         series: [{
-            data: barYData 
+            data: yData
         }]
     });
 }
@@ -80,7 +83,7 @@ function drawLine(divId, xData, yData, titleChart) {
 			text: 'Designed by Mani'
 		},
         series: [{
-            name: 'Tokyo',
+            name: '# of booking',
             data: yData
         }]
     });
