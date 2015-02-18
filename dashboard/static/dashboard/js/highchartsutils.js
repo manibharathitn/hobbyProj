@@ -90,7 +90,14 @@ function drawLine(divId, xData, yData, titleChart) {
 }
 
 
-function drawPie(divId, dataValues, titleChart) {
+function drawPie(divId, xData, yData, titleChart, xLegend) {
+
+    dataValues = [], i = -1;
+    while ( xData[++i] ) {
+      dataValues.push( [ xData[i], yData[i] ] );
+    }
+
+
     $(divId).highcharts({
         chart: {
             plotBackgroundColor: null,
@@ -109,7 +116,7 @@ function drawPie(divId, dataValues, titleChart) {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.y}',
+                    format: xLegend + ' <b>{point.name}</b>: {point.y}',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
@@ -122,7 +129,7 @@ function drawPie(divId, dataValues, titleChart) {
 		},
         series: [{
             type: 'pie',
-            name: 'Browser share',
+            name: 'Contribution',
             data: dataValues
         }]
     });

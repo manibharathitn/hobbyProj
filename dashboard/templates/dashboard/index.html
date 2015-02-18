@@ -58,20 +58,38 @@
 		</div>
 	</div>
 	<div class="row clearfix" id="row2">
-		<div class="col-md-12 column">
-			<div class="dropdown">
+	    <div class="row clearfix">
+    		<div class="col-md-3 column">
+    			<div class="dropdown">
+    				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+    					<span class="selection">Select Month</span>
+    					<span class="caret"></span>
+    				  </button>
+    				<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('July')">July</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('August')">August</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('September')">September</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('October')">October</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('November')">November</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateMonth('December')">December</a></li>
+    				</ul>
+    			</div>
+    		</div>
+    		<div class="col-md-3 column">
+    			<div class="dropdown">
+    				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">
+    					<span class="selection">Select # of Top records</span>
+    					<span class="caret"></span>
+    				  </button>
+    				<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateTop('top=5')">5</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateTop('top=10')">10</a></li>
+    					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateTop('top=15')">15</a></li>
+    				</ul>
+    			</div>
+            </div>
+        </div>
 
-				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-					<span class="selection">Option 1</span>
-					<span class="caret"></span>
-				  </button>
-				<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Jan')">Jan</a></li>
-					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Feb')">Feb</a></li>
-					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Mar')">Mar</a></li>
-					<li role="presentation"><a role="menuitem" tabindex="-1" href="#row2" onClick="updateGraph('Apr')">Apr</a></li>
-				</ul>
-			</div>
 			<div class="row clearfix">
 				<div class="col-md-6 column">
 					<div id="pie1" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
@@ -99,13 +117,17 @@
 $(document).ready(function(){
 
     $("#pending-number").click(function(){
-        //chartDataUrl = "plotgraph_pendingbooking?by=month";
-        //refreshChart(chartDataUrl);
+        chartDataUrlCity = "plotgraph_pendingbooking?by=city_code";
+        chartDataUrlHotel = "plotgraph_pendingbooking?by=hid";
+        chartDataUrlMonth = "plotgraph_pendingbooking?by=month";
+        refreshTrend();
 	});
 
     $("#pending-percent").click(function(){
-        //chartDataUrl = "plotgraph_pendingbooking?by=hid";
-        //refreshChart(chartDataUrl);
+        chartDataUrlCity = "plotgraph_pendingbooking?by=city_code&percent";
+        chartDataUrlHotel = "plotgraph_pendingbooking?by=hid&percent";
+        chartDataUrlMonth = "plotgraph_pendingbooking?by=month&percent";
+        refreshTrend();
 	});
 
 });
@@ -125,56 +147,83 @@ $(".dropdown-menu li a").click(function(){
 
 });
 
-var chartDataUrl = "plotgraph_pendingbooking?by=city_code";
+var chartDataUrlCity = "plotgraph_pendingbooking?by=city_code";
+var chartDataUrlHotel = "plotgraph_pendingbooking?by=hid";
+var chartDataUrlMonth = "plotgraph_pendingbooking?by=month";
+
+var bookingURL = "plotgraph_query?for_month=August&need=Booking&based_on=city_code&top=5";
+var pendingURL = "plotgraph_query?for_month=August&need=Pending&based_on=city_code&top=5";
+var hotelURL = "plotgraph_query?for_month=August&need=Booking&based_on=hid&top=5";
+var durationURL = "plotgraph_query?for_month=August&need=duration&based_on=hid&top=5&avg";
+var prevMonth = 'August';
+var prevTop = 'top=5';
+
+refreshTrend();
+refreshPies();
+
+function updateMonth(month) {
+    bookingURL = bookingURL.replace(prevMonth, month);
+    pendingURL = pendingURL.replace(prevMonth, month);
+    hotelURL = hotelURL.replace(prevMonth, month);
+    durationURL = durationURL.replace(prevMonth, month);
+    if (prevMonth != month)
+        refreshPies();
+    prevMonth = month;
+}
+
+function updateTop(topN) {
+    bookingURL = bookingURL.replace(prevTop, topN);
+    pendingURL = pendingURL.replace(prevTop, topN);
+    hotelURL = hotelURL.replace(prevTop, topN);
+    durationURL = durationURL.replace(prevTop, topN);
+    if (prevTop != topN)
+        refreshPies();
+    prevMonth = month;
+}
 
 
-$.getJSON(chartDataUrl,
-	function(data) {
-		drawBar('#bar1',data['X'] , data['Y'], 'Booking Trend (based on City)');
-});
+function refreshTrend() {
+    $.getJSON(chartDataUrlCity,
+    	function(data) {
+    		drawBar('#bar1',data['X'] , data['Y'], 'Booking Trend (based on City)');
+    });
 
-chartDataUrl = "plotgraph_pendingbooking?by=hid";
+    $.getJSON(chartDataUrlHotel,
+    	function(data) {
+    		drawBar('#bar2', data['X'], data['Y'], 'Booking Trend (based on Hotel)');
+    });
 
-$.getJSON(chartDataUrl,
-	function(data) {
-		drawBar('#bar2', data['X'], data['Y'], 'Booking Trend (based on Hotel)');
-});
-
-chartDataUrl = "plotgraph_pendingbooking?by=month";
-refreshChart(chartDataUrl);
-
-//TODO:Optimize this
-function refreshChart(chartDataUrl) {
-    $.getJSON(chartDataUrl,
+    $.getJSON(chartDataUrlMonth,
     	function(data) {
     		drawLine('#line1', data['X'], data['Y'], 'StayZilla Booking Trend');
-
     });
 }
 
+function refreshPies() {
+    //Row 2
+
+    $.getJSON(bookingURL,
+    	function(data) {
+    		drawPie('#pie1', data['X'], data['Y'], 'Top Bookings', 'City Code');
+    });
+
+    $.getJSON(pendingURL,
+    	function(data) {
+    		drawPie('#pie2', data['X'], data['Y'], 'Top Pending Bookings', 'City Code');
+    });
+
+    $.getJSON(hotelURL,
+    	function(data) {
+    		drawPie('#pie3', data['X'], data['Y'], 'Avg. Duration of Stay', 'Hotel Id');
+    });
+
+    $.getJSON(durationURL,
+    	function(data) {
+    		drawPie('#pie4', data['X'], data['Y'], 'Bookings based on Hotels', 'Hotel Id');
+    });
 
 
-
-
-
-//mix (x,y) values and construct the dataValues for pie chart
-dataValues = [
-			['Firefox',   160],
-            ['IE',       212],
-            ['Safari',    100],
-            ['Opera',     120],
-            ['Others',   200]
-        ];
-drawPie('#pie1',dataValues, 'Top Bookings');
-drawPie('#pie2',dataValues, 'Top Pending Bookings');
-drawPie('#pie3',dataValues, 'Avg. Duration of Stay');
-drawPie('#pie4',dataValues, 'Bookings based on Hotels');
-
-function updateGraph(month) {
-
-	alert(month);
 }
-
 
 </script>
 </body>

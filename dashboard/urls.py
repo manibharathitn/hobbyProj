@@ -5,4 +5,5 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$',views.detail),
 	url(r'^plotgraph_pendingbooking',views.getPendingBooking),
+	url(r'^plotgraph_query',views.getGraphData),
 )
